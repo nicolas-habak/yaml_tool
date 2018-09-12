@@ -42,6 +42,12 @@
           </td>
           <td class="editor">
             <div class="code editor" contenteditable="true" onkeypress="codeKeyPress(event)" onkeydown="codeKeyDown(event)" onkeyup="codeKeyUp(event)">
+            	test int<br />
+            	bool string<br />
+            	&nbsp;bool<br />
+            	string variable="string"<br />
+            	int var=3<br />
+            	my_var:"butt"
             </div>
           </td>
         </tr>
@@ -49,7 +55,55 @@
     </div>
 
     <script>
-      let updated = false;
+      init();
+      
+      function init() {
+        updateLineNumbers();
+      }
+      
+      let observer = new MutationObserver(divChange);
+      let el = document.querySelector("div.editor");
+      let config = {
+        childList: true,
+        subtree : true,
+        attributes: false,
+        characterData : true
+      };
+      
+      //then actually do some observing
+      observer.observe(el, config);
+      
+      function divChange () {
+        if(true || !updated) {
+          updateLineNumbers();
+          // updateSyntaxHighlighting(rsYaml);
+        }
+        // updated = true;
+      }
+      
+      
+      function updateLineNumbers() {
+        let divCode = document.querySelector('div.editor');
+        let divLineNb = document.querySelector('div.lineNumbers');
+        let lines = divCode.innerText.split('\n');
+        let lineNb = lines.length;
+      
+        if(lines[lines.length-1] != "" || lineNb == 0)
+          ++lineNb;
+        
+        let lineNumbers = "";
+      
+        for(let i = 1; i < lineNb; i++) {
+          lineNumbers += i + '\r\n';
+        }
+      
+        divLineNb.innerText = lineNumbers || 1;
+      }
+      
+      function parse(code) {
+        let litteralMarkers = "\`|'|\"";
+      }
+      
       function test() {
         let editor = document.querySelector('div.editor');
         let code = editor.innerText;
@@ -61,7 +115,12 @@
         }
         alert(output);
       }
-
+      
+      
+      
+      /*
+      let updated = false;
+      
       let rsYaml = {
       }
 
@@ -101,87 +160,49 @@
         }
       }
 
-      let observer = new MutationObserver(divChange);
-      let el = document.querySelector("div.editor");
-      let config = {
-        childList: true,
-        subtree : true,
-        attributes: false,
-        characterData : true
-      };
-
-      //then actually do some observing
-      observer.observe(el, config);
-
-      function divChange () {
-        if(!updated) {
-          updateLineNumbers();
-          updateSyntaxHighlighting(rsYaml);
-        }
-        updated = true;
-      }
-
-      function updateLineNumbers() {
-        let divCode = document.querySelector('div.editor');
-        let divLineNb = document.querySelector('div.lineNumbers');
-        let lines = divCode.innerText.split('\n');
-        let lineNb = lines.length;
-
-        if(lines[lines.length-1] != "" || lineNb == 0)
-          ++lineNb;
-        let lineNumbers = "";
-
-        for(let i = 1; i < lineNb; i++) {
-          lineNumbers += i + '\r\n';
-        }
-
-        divLineNb.innerText = lineNumbers || 1;
-      }
-
       function updateSyntaxHighlighting(ruleSet) {
-        el.innerHtml = (new KeyWordRule(['int', 'string', 'bool'], 'color:blue')).applyRule(el.innerText);
+        // el.innerHTML = (new KeyWordRule(['int', 'string', 'bool'], 'color:blue; font-weight:bold;')).applyRule(el.innerText).replaceAll("\n", "<br />");
         // https://www.w3schools.com/howto/howto_syntax_highlight.asp
       }
-
-      function codeKeyDown(event) {
-        updated = false;
-        let divCode = document.querySelector('div.editor');
-        switch (event.code) {
-          case "Tab":
-            let sel = document.getSelection();
-            let start = sel.anchorOffset;
-            let end = sel.focusOffset
-            let pos = 0;
-
-            console.log(`${start}, ${end}, ${pos}`)
-
-            if(sel.type == "Range"){
-
-                // console.log(sel.selectionStart + ', ' + sel.selectionEnd)
-            } else {
-              // console.log(sel.selectionStart + ', ' + sel.selectionEnd)
-            }
-            event.preventDefault();
-            break;
-          default:
-
-        }
+      */
+      
+      function codeKeyDown(event) {/*
+      updated = false;
+      let divCode = document.querySelector('div.editor');
+      switch (event.code) {
+      case "Tab":
+      let sel = document.getSelection();
+      let start = sel.anchorOffset;
+      let end = sel.focusOffset
+      let pos = 0;
+      
+      console.log(`${start}, ${end}, ${pos}`)
+      
+      if(sel.type == "Range"){
+      
+      // console.log(sel.selectionStart + ', ' + sel.selectionEnd)
+      } else {
+      // console.log(sel.selectionStart + ', ' + sel.selectionEnd)
       }
-
+      event.preventDefault();
+      break;
+      default:
+      
+      }*/
+      }
+      
       function codeKeyPress(event) {
-        // console.log('kp');
-        // console.log(event);
-        // console.log('=========');
-        // updateLineNumbers();
+      // console.log('kp');
+      // console.log(event);
+      // console.log('=========');
+      // updateLineNumbers();
       }
       function codeKeyUp(event) {
-        // console.log('ku');
-        // console.log(event);
-        // console.log('=========');
-        // updateLineNumbers();
+      // console.log('ku');
+      // console.log(event);
+      // console.log('=========');
+      // updateLineNumbers();
       }
-
-      updateLineNumbers();
     </script>
   </body>
 </html>
