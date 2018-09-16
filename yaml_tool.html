@@ -41,14 +41,7 @@
             </div>
           </td>
           <td class="editor">
-            <div class="code editor" contenteditable="true" onkeypress="codeKeyPress(event)" onkeydown="codeKeyDown(event)" onkeyup="codeKeyUp(event)">
-            	test int<br />
-            	bool string<br />
-            	&nbsp;bool<br />
-            	string variable="string"<br />
-            	int var=3<br />
-            	my_var:"butt"
-            </div>
+            <div class="code editor" contenteditable="true" onkeypress="codeKeyPress(event)" onkeydown="codeKeyDown(event)" onkeyup="codeKeyUp(event)">myvar:"butt"</div>
           </td>
         </tr>
       </table>
@@ -56,9 +49,11 @@
 
     <script>
       init();
+      let updated = true;
       
       function init() {
         updateLineNumbers();
+        highlight();
       }
       
       let observer = new MutationObserver(divChange);
@@ -74,11 +69,14 @@
       observer.observe(el, config);
       
       function divChange () {
-        if(true || !updated) {
-          updateLineNumbers();
+        updateLineNumbers();
+        if(!updated) {
+          // highlight();
           // updateSyntaxHighlighting(rsYaml);
+          updated = true;
+        } else {
+          updated = false;
         }
-        // updated = true;
       }
       
       
@@ -99,13 +97,26 @@
       
         divLineNb.innerText = lineNumbers || 1;
       }
-      
-      function parse(code) {
-        let litteralMarkers = "\`|'|\"";
-      }
+     
+     function yamlHighlight(code) {
+       return code.replace(/^(\s*([\w\-]+|\<{2})\:\s*)(\`.*\`|\".*\"|\'.*\')$/gm,'<span style="color:blue; font-weight:bold;">$1</span><span style="color:green">$3</span><br />');
+     }
+     
+     function highlight() {
+       let divCode = document.querySelector('div.editor');
+       divCode.innerHTML = yamlHighlight(divCode.innerText);
+       console.log(yamlHighlight(divCode.innerText));
+     }
+      /*function parse(code) {
+        let litteralMarkers = [ "'", '"', "`" ];
+        let code = [ '#{', '}' ];
+        
+        // escape
+        // parse letter by letter?
+      }*/
       
       function test() {
-        let editor = document.querySelector('div.editor');
+        /*let editor = document.querySelector('div.editor');
         let code = editor.innerText;
         let lines = code.split('\n');
         let output = "";
@@ -113,10 +124,9 @@
         for(let line of lines) {
           output += `line ${i++}: ${line}\n`;
         }
-        alert(output);
+        alert(output);*/
+        highlight();
       }
-      
-      
       
       /*
       let updated = false;
