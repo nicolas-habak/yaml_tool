@@ -18,6 +18,7 @@
       DIV.wrapper {
         border: 1px #ccc solid;
         border-radius: 5px;
+        height: 90%;
       }
       DIV.lineNumbers {
         color: #4286f4;
@@ -32,7 +33,6 @@
     </style>
   </head>
   <body>
-    <input type="button" value="test" onclick="test()" />
     <div class="code wrapper">
       <table class="wrapper">
         <tr>
@@ -41,11 +41,15 @@
             </div>
           </td>
           <td class="editor">
-            <div class="code editor" contenteditable="true" onkeypress="codeKeyPress(event)" onkeydown="codeKeyDown(event)" onkeyup="codeKeyUp(event)">myvar:"butt"</div>
+            <div class="code editor" contenteditable="true" onkeydown="codeKeyDown(event)">myvar:"butt"</div>
           </td>
         </tr>
       </table>
     </div>
+   
+    <input type="button" value="test" onclick="test()" />
+    <input type="button" value="test2" onclick="test2()" />
+    <input type="button" value="test3" onclick="test3()" />
 
     <script>
       init();
@@ -86,7 +90,7 @@
         let lines = divCode.innerText.split('\n');
         let lineNb = lines.length;
       
-        if(lines[lines.length-1] != "" || lineNb == 0)
+        if(lines[lines.length - 1] != "" || lineNb == 0)
           ++lineNb;
         
         let lineNumbers = "";
@@ -99,13 +103,46 @@
       }
      
      function yamlHighlight(code) {
-       return code.replace(/^(\s*([\w\-]+|\<{2})\:\s*)(\`.*\`|\".*\"|\'.*\')$/gm,'<span style="color:blue; font-weight:bold;">$1</span><span style="color:green">$3</span><br />');
+       return code.replace(/^(\s*([\w\-]+|\<{2})\:\s*)(\`.*\`|\".*\"|\'.*\')*$/gm,'<span style="color:blue; font-weight:bold;">$1</span><span style="color:green">$3</span><br />');
      }
      
      function highlight() {
        let divCode = document.querySelector('div.editor');
        divCode.innerHTML = yamlHighlight(divCode.innerText);
-       console.log(yamlHighlight(divCode.innerText));
+       // console.log(yamlHighlight(divCode.innerText));
+     }
+     
+     function clone() {
+     }
+     
+     function saveRange() {
+       let range = document.getRange();
+     }
+     
+     function inspect(o, prop, onlyHasOwn = false, level = 1) {
+       let ret = '';
+       
+       if (Array.isArray(o)) {
+         ret = '[\n';
+         for (let i in o) {
+           ret += `${spaces(2, ' ')}${i}: ${o[i]}\n`
+         }
+         ret += ']'
+       }
+       else if (typeof o == 'object') {
+         let reg = new RegExp(`.*${prop}.*`);
+         for(let p in o) {
+           if(!onlyHasOwn || o.hasOwnProperty(p)) {
+             if(!prop || reg.test(p)) {
+               ret += `${p}: ${o[p]}\n`;
+             }
+           }
+         }
+       }
+       else {
+         ret = '' + o;
+       }
+       return ret;
      }
       /*function parse(code) {
         let litteralMarkers = [ "'", '"', "`" ];
@@ -125,9 +162,29 @@
           output += `line ${i++}: ${line}\n`;
         }
         alert(output);*/
+        // highlight();
+        // inspect(document.getSelection(), null, true);
+        // console.log(document.getSelection().containsNode(el.childNodes[0]))
+        // inspect(el, 'child');
+        // inspect(el.childNodes[0])
+        el.innerHTML = `en:<br />${spaces(2)}defaults:<br />${spaces(4)}yep: "yes"<br />${spaces(4)}nope:'no'`
+      }
+      
+      function test2() {
         highlight();
       }
       
+      function test3() {
+        // console.log(inspect(el.childNodes, '', true));
+        console.log(inspect(1));
+        console.log(inspect('a'));
+        console.log(inspect(['a', 'b', 'c']));
+        console.log(inspect({a: '123', b: 'oke dadi'}));
+      }
+      
+      function spaces(nb=1, c='&nbsp;') {
+        return Array(++nb).join(c);
+      }
       /*
       let updated = false;
       
@@ -199,19 +256,6 @@
       default:
       
       }*/
-      }
-      
-      function codeKeyPress(event) {
-      // console.log('kp');
-      // console.log(event);
-      // console.log('=========');
-      // updateLineNumbers();
-      }
-      function codeKeyUp(event) {
-      // console.log('ku');
-      // console.log(event);
-      // console.log('=========');
-      // updateLineNumbers();
       }
     </script>
   </body>
